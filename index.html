@@ -18,7 +18,8 @@
         Value of variable
         <input id="value">
     </label>
-    <button id="var">Get/set var</button>
+    <button id="setvar">Set var</button>
+    <button id="getvar">Get var</button>
     <br />
     <button id="x">LEFT</button>
     <button id="up">UP</button>
@@ -29,19 +30,21 @@
     <div id="result"></div>
 </body>
 <script>
-    document.querySelector("#var").onclick = function() {
+    document.querySelector("#setvar").onclick = function() {
         let name = document.querySelector("#name").value;
         let value = document.querySelector("#value").value;
         let oReq = new XMLHttpRequest();
         oReq.addEventListener("load", reqDone);
-        if (value != "") {
-            oReq.open("PUT", `http://${document.location.hostname}:5000/cmd`);
-            oReq.setRequestHeader("Content-Type", "application/json");
-            oReq.send(JSON.stringify({name, value: eval(value)}));
-        } else {
-            oReq.open("GET", `http://${document.location.hostname}:5000/cmd?name=${name}`);
-            oReq.send();
-        }
+        oReq.open("PUT", `http://${document.location.hostname}:5000/cmd`);
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({name, value: eval(value)}));
+    }
+    document.querySelector("#getvar").onclick = function() {
+        let name = document.querySelector("#name").value;
+        let oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqDone);
+        oReq.open("GET", `http://${document.location.hostname}:5000/cmd?name=${name}`);
+        oReq.send();
     }
     function reqDone() {
         document.querySelector("#result").textContent = this.responseText
