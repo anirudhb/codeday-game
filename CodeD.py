@@ -234,7 +234,7 @@ def game(conn):
                 print(repr(obj["value"]))
                 vars[obj["name"]] = obj["value"]
             elif obj["type"] == "get_var":
-                conn.send(vars.get([obj["name"]], None))
+                conn.send(vars[obj["name"]])
             elif obj["type"] == "command":
                 locals()[obj["cmd"]]()
 
