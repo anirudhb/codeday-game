@@ -117,6 +117,7 @@ while not running:
 
 running = True
 personMovement = 10
+stopped = False
 
 pygame.mixer.music.load("music_final.mp3")
 pygame.mixer.music.play(-1)
@@ -140,18 +141,20 @@ while running:
                     up = False
                     down = True
                     speed = 20
-            if event.key == pygame.K_UP and not up and not lost:
+            if event.key == pygame.K_UP and not up and not lost and not stopped:
                 up = True
                 down = False
                 car_deltas.append(-200)
                 personY -= 200
-            if event.key == pygame.K_DOWN and not down and not lost:
+            if event.key == pygame.K_DOWN and not down and not lost and not stopped:
                 up = False
                 down = True
                 car_deltas.append(200)
                 personY += 200
             if event.key == pygame.K_q:
                 running = False
+            if event.key == pygame.K_SPACE and not lost:
+                stopped = not stopped
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT and not lost:
                 personX -= personMovement
@@ -172,6 +175,9 @@ while running:
     person(personX, personY)
 
 
+    if stopped:
+        pygame.display.flip()
+        continue
     if (not (personRect.colliderect(currentCarRect) and personY-25 <= carY)):
         carX -= speed
         backgroundX -= backgroundSpeed
@@ -209,6 +215,6 @@ while running:
         car_deltas = []
         counter += 1
 
-    speed += 0.2
+    speed += 0.2*(WIDTH/1000)
 
 pygame.quit()
