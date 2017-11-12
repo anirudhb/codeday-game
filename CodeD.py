@@ -7,7 +7,7 @@ HEIGHT = 1000
 
 counter = 0
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Super Platform")
 running = False
 
@@ -73,7 +73,7 @@ font2 = pygame.font.Font("SomethingStrange.ttf", 120)
 you_lose = font2.render("You Lose!", 1, (255, 0, 0))
 you_loseX = WIDTH/2-(you_lose.get_width()/2)
 you_loseY = 0
-text = font.render("Press enter to play again!", 1, (0, 0, 0))
+text = font.render("Press enter to play again; Q to quit", 1, (0, 0, 0))
 textX = WIDTH/2-(text.get_width()/2)
 textY = HEIGHT/2-40
 creditsFont = pygame.font.SysFont("", 30)
@@ -159,6 +159,10 @@ while running:
             if event.key == pygame.K_RIGHT and not lost:
                 personX += personMovement
                 personX = min(personX, WIDTH-personWidth)
+        if event.type == pygame.VIDEORESIZE:
+            w, h = event.w, event.h
+            screen = pygame.display.set_mode((w, h), pygame.RESIZABLE)
+
 
 
     screen.fill((255, 255, 255))
@@ -207,5 +211,4 @@ while running:
 
     speed += 0.2
 
-print(counter)
 pygame.quit()
