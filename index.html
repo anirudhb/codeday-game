@@ -7,6 +7,21 @@
         #x {
             opacity: 0;
         }
+        * {
+            font-size: 70px;
+        }
+        #center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #pause {
+            width: 100%;
+        }
+        #up {
+            margin-left: -29%;
+        }
     </style>
 </head>
 <body>
@@ -14,22 +29,28 @@
         Name of variable
         <input id="name">
     </label>
+    <br />
     <label>
         Value of variable
         <input id="value">
     </label>
+    <br />
     <button id="setvar">Set var</button>
     <button id="getvar">Get var</button>
     <br />
-    <button id="x">LEFT</button>
-    <button id="up">UP</button>
-    <br />
-    <button id="left">LEFT</button>
-    <button id="down">DOWN</button>
-    <button id="right">RIGHT</button>
-    <br />
-    <button id="pause">PAUSE</button>
+
     <div id="result"></div>
+    <br />
+    <div id="center">
+        <button id="x">LEFT</button>
+        <button id="up">↑</button>
+        <br />
+        <button id="left">←</button>
+        <button id="down">↓</button>
+        <button id="right">→</button>
+        <br />
+        <button id="pause">PAUSE</button>
+    </div>
 </body>
 <script>
     document.querySelector("#setvar").onclick = function() {
