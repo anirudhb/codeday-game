@@ -84,7 +84,7 @@ creditsY = HEIGHT-40
 titleFont = pygame.font.Font("SomethingStrange.ttf", 120)
 title = titleFont.render("Skateboard Daredevil", 1, (255, 0, 0))
 titleX = (WIDTH/2)-(title.get_width()/2)
-titleY = 0
+titleY = 200
 
 lost = False
 rounding = True
@@ -110,8 +110,8 @@ while not running:
                 running = True
 
     screen.fill((255, 255, 255))
-    start_text = font.render("Press S to start, Q to quit", 1, (0,0,0))
-    screen.blit(start_text, (WIDTH/2-300, HEIGHT/2))
+    start_text = font.render("Press S to start, Q to quit, Spacebar to pause", 1, (0,0,0))
+    screen.blit(start_text, (WIDTH/2-(start_text.get_width()/2), HEIGHT/2+100))
     screen.blit(title, (titleX, titleY))
     pygame.display.flip()
 
