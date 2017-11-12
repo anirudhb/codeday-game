@@ -108,7 +108,7 @@
         oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
-            cmd: "lost"
+            cmd: "lose"
         }));
     }
     document.onkeydown = function(e) {
