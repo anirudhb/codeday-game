@@ -27,6 +27,8 @@
     <button id="left">LEFT</button>
     <button id="down">DOWN</button>
     <button id="right">RIGHT</button>
+    <br />
+    <button id="pause">PAUSE</button>
     <div id="result"></div>
 </body>
 <script>
@@ -49,7 +51,7 @@
     function reqDone() {
         document.querySelector("#result").textContent = this.responseText
     }
-    document.querySelector("#up").onclick = function() {
+    document.querySelector("#up").onclick = up = function() {
         let oReq = new XMLHttpRequest();
         oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
@@ -57,7 +59,7 @@
             cmd: "up_key"
         }));
     }
-    document.querySelector("#down").onclick = function() {
+    let down = function() {
         let oReq = new XMLHttpRequest();
         oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
@@ -65,7 +67,8 @@
             cmd: "down_key"
         }));
     }
-    document.querySelector("#left").onclick = function() {
+    document.querySelector("#down").onclick = down;
+    let left = function() {
         let oReq = new XMLHttpRequest();
         oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
@@ -73,13 +76,49 @@
             cmd: "left_key"
         }));
     }
-    document.querySelector("#right").onclick = function() {
+    document.querySelector("#left").onclick = left;
+
+    let right = function() {
         let oReq = new XMLHttpRequest();
         oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "right_key"
         }));
+    }
+    document.querySelector("#right").onclick = right
+    let pause = function() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("GET", `http://${document.location.hostname}:5000/cmd?name=stopped`);
+        oReq.addEventListener("load", pause2);
+        oReq.send();
+    }
+    document.querySelector("#pause").onclick = pause;
+    function pause2() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PUT", `http://${document.location.hostname}:5000/cmd`);
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            name: "stopped",
+            value: !(eval(this.responseText.toLowerCase()))
+        }))
+    }
+    document.onkeydown = function(e) {
+        if (e.which == 38) {
+            up()
+        }
+        if (e.which == 40) {
+            down()
+        }
+        if (e.which == 37) {
+            left()
+        }
+        if (e.which == 39) {
+            right()
+        }
+        if (e.key == " ") {
+            pause()
+        }
     }
 </script>
 </html>
