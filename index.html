@@ -35,11 +35,11 @@
         let oReq = new XMLHttpRequest();
         oReq.addEventListener("load", reqDone);
         if (value != "") {
-            oReq.open("PUT", `http://${window.location.hostname}:5000/cmd`);
+            oReq.open("PUT", `http://${document.location.hostname}:5000/cmd`);
             oReq.setRequestHeader("Content-Type", "application/json");
             oReq.send(JSON.stringify({name, value: eval(value)}));
         } else {
-            oReq.open("GET", `http://${window.location.hostname}:5000/cmd?name=${name}`);
+            oReq.open("GET", `http://${document.location.hostname}:5000/cmd?name=${name}`);
             oReq.send();
         }
     }
@@ -48,7 +48,7 @@
     }
     document.querySelector("#up").onclick = function() {
         let oReq = new XMLHttpRequest();
-        oReq.open("PATCH", `http://${window.location.hostname}:5000/cmd`);
+        oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "up_key"
@@ -56,7 +56,7 @@
     }
     document.querySelector("#down").onclick = function() {
         let oReq = new XMLHttpRequest();
-        oReq.open("PATCH", `http://${window.location.hostname}:5000/cmd`);
+        oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "down_key"
@@ -64,7 +64,7 @@
     }
     document.querySelector("#left").onclick = function() {
         let oReq = new XMLHttpRequest();
-        oReq.open("PATCH", `http://${window.location.hostname}:5000/cmd`);
+        oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "left_key"
@@ -72,7 +72,7 @@
     }
     document.querySelector("#right").onclick = function() {
         let oReq = new XMLHttpRequest();
-        oReq.open("PATCH", `http://${window.location.hostname}/cmd`);
+        oReq.open("PATCH", `http://${document.location.hostname}/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "right_key"
