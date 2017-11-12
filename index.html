@@ -104,6 +104,7 @@
         }))
     }
     document.onkeydown = function(e) {
+        if (e.repeat) return
         if (e.which == 38) {
             up()
         }
