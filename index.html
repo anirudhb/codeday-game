@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Remote control</title>
+    <style>
+        #x {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <label>
+        Name of variable
+        <input id="name">
+    </label>
+    <label>
+        Value of variable
+        <input id="value">
+    </label>
+    <button id="var">Get/set var</button>
+    <br />
+    <button id="x">LEFT</button>
+    <button id="up">UP</button>
+    <br />
+    <button id="left">LEFT</button>
+    <button id="down">DOWN</button>
+    <button id="right">RIGHT</button>
+    <div id="result"></div>
+</body>
+<script>
+    document.querySelector("#var").onclick = function() {
+        let name = document.querySelector("#name").value;
+        let value = document.querySelector("#value").value;
+        let oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqDone);
+        if (value != "") {
+            oReq.open("PUT", `http://10.114.6.15:5000/cmd`);
+            oReq.setRequestHeader("Content-Type", "application/json");
+            oReq.send(JSON.stringify({name, value: eval(value)}));
+        } else {
+            oReq.open("GET", `http://10.114.6.15:5000/cmd?name=${name}`);
+            oReq.send();
+        }
+    }
+    function reqDone() {
+        document.querySelector("#result").textContent = this.responseText
+    }
+    document.querySelector("#up").onclick = function() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PATCH", "http://10.114.6.15:5000/cmd");
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            cmd: "up_key"
+        }));
+    }
+    document.querySelector("#down").onclick = function() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PATCH", "http://10.114.6.15:5000/cmd");
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            cmd: "down_key"
+        }));
+    }
+    document.querySelector("#left").onclick = function() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PATCH", "http://10.114.6.15:5000/cmd");
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            cmd: "left_key"
+        }));
+    }
+    document.querySelector("#right").onclick = function() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PATCH", "http://10.114.6.15:5000/cmd");
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            cmd: "right_key"
+        }));
+    }
+</script>
+</html>

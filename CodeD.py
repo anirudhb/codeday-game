@@ -7,11 +7,17 @@ def game(conn):
     WIDTH = 2000
     HEIGHT = 1000
 
-    counter = 0
+    vars = {
+        "counter": 0,
+        "speed": 30,
+        "backgroundSpeed": 20,
+        "personMovement": 10,
+        "running": False,
+        "stopped": False
+    }
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Skateboard Daredevil")
-    running = False
 
     personWidth = 200
 
@@ -90,10 +96,7 @@ def game(conn):
 
     car_deltas = []
 
-    speed = 30
-    backgroundSpeed = 20
-
-    while not running:
+    while not vars["running"]:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -103,7 +106,7 @@ def game(conn):
                     pygame.quit()
                     raise SystemExit()
                 if event.key == pygame.K_s:
-                    running = True
+                    vars["running"] = True
 
         screen.fill((255, 255, 255))
         start_text = font.render("Press S to start, Q to quit, Spacebar to pause", 1, (0,0,0))
@@ -111,42 +114,42 @@ def game(conn):
         screen.blit(title, (titleX, titleY))
         pygame.display.flip()
 
-    running = True
-    personMovement = 10
+    vars["running"] = True
+    vars["personMovement"] = 10
 
     pygame.mixer.music.load("music_final.mp3")
     pygame.mixer.music.play(-1)
     pygame.key.set_repeat(300, 50)
 
     def lose():
-        nonlocal lost, counter, personY, carX, carY, up, down, speed
+        nonlocal lost, personY, carX, carY, up, down, vars
         lost = False
-        counter = 0
+        vars["counter"] = 0
         personY = HEIGHT/2
         carX = WIDTH-500
         carY = (HEIGHT/2)+150
         personY = HEIGHT/2
         up = False
         down = True
-        speed = 20
+        vars["speed"] = 20
 
     def left_key():
-        nonlocal personX
-        if lost or stopped:
+        nonlocal personX, vars
+        if lost or vars["stopped"]:
             return
-        personX -= personMovement
+        personX -= vars["personMovement"]
         personX = max(personX, 0)
 
     def right_key():
-        nonlocal personX
-        if lost or stopped:
+        nonlocal personX, vars
+        if lost or vars["stopped"]:
             return
-        personX += personMovement
+        personX += vars["personMovement"]
         personX = min(personX, WIDTH-personWidth)
 
     def up_key():
-        nonlocal up, down, personY
-        if lost or up or stopped:
+        nonlocal up, down, personY, vars
+        if lost or up or vars["stopped"]:
             return
         up = True
         down = False
@@ -154,8 +157,8 @@ def game(conn):
         personY -= 200
 
     def down_key():
-        nonlocal up, down, personY
-        if lost or down or stopped:
+        nonlocal up, down, personY, vars
+        if lost or down or vars["stopped"]:
             return
         up = False
         down = True
@@ -168,7 +171,7 @@ def game(conn):
         screen.blit(you_lose, (you_loseX, you_loseY))
         screen.blit(text, (textX, textY))
         screen.blit(creditsText, (creditsX, creditsY))
-        score = font.render("Your score was " + str(counter), 1, (0,0,0))
+        score = font.render("Your score was " + str(vars["counter"]), 1, (0,0,0))
         screen.blit(score, (textX, textY+40))
         if pygame.mixer.music.get_busy():
             pygame.mixer.music.fadeout(1000)
@@ -176,7 +179,7 @@ def game(conn):
 
 
     def current_car():
-        nonlocal carX, carY,counter, currentCar, currentCarRect, car_deltas
+        nonlocal carX, carY, currentCar, currentCarRect, car_deltas, vars
         carX = WIDTH+carWidth
         if currentCar == car:
             currentCar = car2
@@ -189,23 +192,23 @@ def game(conn):
         for d in car_deltas:
             carY += d
         car_deltas = []
-        counter += 1
+        vars["counter"] += 1
 
-    stopped = False
+    vars["stopped"] = False
 
 
     def stop():
-        nonlocal stopped
+        nonlocal vars
         if lost:
             return
-        stopped = not stopped
+        vars["stopped"] = not vars["stopped"]
 
-    while running:
+    while vars["running"]:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.play(-1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                vars["running"] = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     lose()
@@ -216,7 +219,7 @@ def game(conn):
                 if event.key == pygame.K_DOWN:
                     down_key()
                 if event.key == pygame.K_q:
-                    running = False
+                    vars["running"] = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     left_key()
@@ -229,9 +232,9 @@ def game(conn):
             obj = conn.recv()
             if obj["type"] == "set_var":
                 print(repr(obj["value"]))
-                exec(compile("%s=%s" % (obj["name"], obj["value"]), "<string>", "exec"), locals())
+                vars[obj["name"]] = obj["value"]
             elif obj["type"] == "get_var":
-                conn.send(locals()[obj["name"]])
+                conn.send(vars.get([obj["name"]], None))
             elif obj["type"] == "command":
                 locals()[obj["cmd"]]()
 
@@ -243,17 +246,17 @@ def game(conn):
         currentCar(carX, carY)
         person(personX, personY)
 
-        if stopped:
+        if vars["stopped"]:
             pygame.display.flip()
             continue
 
         if (not (personRect.colliderect(currentCarRect) and personY-25 <= carY)):
-            carX -= speed
-            backgroundX -= backgroundSpeed
+            carX -= vars["speed"]
+            backgroundX -= vars["backgroundSpeed"]
         else:
             losing_page()
 
-        counterText = font.render("Score: " + str((counter)), 1, (0,0,0))
+        counterText = font.render("Score: " + str((vars["counter"])), 1, (0,0,0))
         screen.blit(counterText, (0,0))
 
         pygame.display.flip()
@@ -264,6 +267,6 @@ def game(conn):
         if carX < -carWidth:
             current_car()
 
-        speed += 0.2
+        vars["speed"] += 0.2
 
     pygame.quit()
