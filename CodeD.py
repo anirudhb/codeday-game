@@ -8,7 +8,7 @@ HEIGHT = 1000
 counter = 0
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-pygame.display.set_caption("Super Platform")
+pygame.display.set_caption("Skateboard Daredevil")
 running = False
 
 personWidth = 200
@@ -122,6 +122,78 @@ pygame.mixer.music.load("music_final.mp3")
 pygame.mixer.music.play(-1)
 pygame.key.set_repeat(300, 50)
 
+def lose():
+    global lost, counter, personY, carX, carY, up, down, speed
+    lost = False
+    counter = 0
+    personY = HEIGHT/2
+    carX = WIDTH-500
+    carY = (HEIGHT/2)+150
+    personY = HEIGHT/2
+    up = False
+    down = True
+    speed = 20
+
+def left_key():
+    global personX
+    if lost:
+        return
+    personX -= personMovement
+    personX = max(personX, 0)
+
+def right_key():
+    global personX
+    if lost:
+        return
+    personX += personMovement
+    personX = min(personX, WIDTH-personWidth)
+
+def up_key():
+    global up, down, personY
+    if lost or up:
+        return
+    up = True
+    down = False
+    car_deltas.append(-200)
+    personY -= 200
+
+def down_key():
+    global up, down, personY
+    if lost or down:
+        return
+    up = False
+    down = True
+    car_deltas.append(200)
+    personY += 200
+
+
+def losing_page():
+    screen.fill((255, 255, 255))
+    screen.blit(you_lose, (you_loseX, you_loseY))
+    screen.blit(text, (textX, textY))
+    screen.blit(creditsText, (creditsX, creditsY))
+    score = font.render("Your score was " + str(counter), 1, (0,0,0))
+    screen.blit(score, (textX, textY+40))
+    if pygame.mixer.music.get_busy():
+        pygame.mixer.music.fadeout(1000)
+    lost = True
+
+
+def current_car():
+    global carX, carY,counter, currentCar, currentCarRect, car_deltas
+    carX = WIDTH+carWidth
+    if currentCar == car:
+        currentCar = car2
+    else:
+        currentCar = car
+    if currentCarRect == carRect:
+        currentCarRect = car2Rect
+    else:
+        currentCarRect = carRect
+    for d in car_deltas:
+        carY += d
+    car_deltas = []
+    counter += 1
 while running:
     if not pygame.mixer.music.get_busy():
         pygame.mixer.music.play(-1)
@@ -129,36 +201,20 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYUP:
-            if lost:
-                if event.key == pygame.K_RETURN:
-                    lost = False
-                    counter = 0
-                    personY = HEIGHT/2
-                    carX = WIDTH-500
-                    carY = (HEIGHT/2)+150
-                    personY = HEIGHT/2
-                    up = False
-                    down = True
-                    speed = 20
-            if event.key == pygame.K_UP and not up and not lost:
-                up = True
-                down = False
-                car_deltas.append(-200)
-                personY -= 200
-            if event.key == pygame.K_DOWN and not down and not lost:
-                up = False
-                down = True
-                car_deltas.append(200)
-                personY += 200
+            if event.key == pygame.K_RETURN:
+                lose()
+
+            if event.key == pygame.K_UP:
+                up_key()
+            if event.key == pygame.K_DOWN:
+                down_key()
             if event.key == pygame.K_q:
                 running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and not lost:
-                personX -= personMovement
-                personX = max(personX, 0)
-            if event.key == pygame.K_RIGHT and not lost:
-                personX += personMovement
-                personX = min(personX, WIDTH-personWidth)
+            if event.key == pygame.K_LEFT:
+                left_key()
+            if event.key == pygame.K_RIGHT:
+                right_key()
         if event.type == pygame.VIDEORESIZE:
             w, h = event.w, event.h
             screen = pygame.display.set_mode((w, h), pygame.RESIZABLE)
@@ -176,15 +232,7 @@ while running:
         carX -= speed
         backgroundX -= backgroundSpeed
     else:
-        screen.fill((255, 255, 255))
-        screen.blit(you_lose, (you_loseX, you_loseY))
-        screen.blit(text, (textX, textY))
-        screen.blit(creditsText, (creditsX, creditsY))
-        score = font.render("Your score was " + str(counter), 1, (0,0,0))
-        screen.blit(score, (textX, textY+40))
-        if pygame.mixer.music.get_busy():
-            pygame.mixer.music.fadeout(1000)
-        lost = True
+        losing_page()
 
     counterText = font.render("Score: " + str((counter)), 1, (0,0,0))
     screen.blit(counterText, (0,0))
@@ -195,19 +243,7 @@ while running:
 
 
     if carX < -carWidth:
-        carX = WIDTH+carWidth
-        if currentCar == car:
-            currentCar = car2
-        else:
-            currentCar = car
-        if currentCarRect == carRect:
-            currentCarRect = car2Rect
-        else:
-            currentCarRect = carRect
-        for d in car_deltas:
-            carY += d
-        car_deltas = []
-        counter += 1
+        current_car()
 
     speed += 0.2
 
