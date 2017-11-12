@@ -69,9 +69,22 @@ currentCar2 = car2
 currentCarRect2 = car2Rect
 
 font = pygame.font.SysFont("", 60, 1)
-text = font.render("You lose! Press any key to play again!", 1, (0, 0, 0))
-textX = WIDTH/2-450
+font2 = pygame.font.Font("SomethingStrange.ttf", 120)
+you_lose = font2.render("You Lose!", 1, (255, 0, 0))
+you_loseX = WIDTH/2-200
+you_loseY = 0
+text = font.render("Press any key to play again!", 1, (0, 0, 0))
+textX = WIDTH/2-400
 textY = HEIGHT/2-40
+creditsFont = pygame.font.SysFont("", 30)
+creditsText = creditsFont.render("Credits to David Fesliyan for music; publicdomainvectors.org for art", 1, (0, 0, 0))
+creditsX = WIDTH/2-500
+creditsY = HEIGHT-40
+
+titleFont = pygame.font.Font("SomethingStrange.ttf", 120)
+title = titleFont.render("Skateboard Daredevil", 1, (255, 0, 0))
+titleX = 25
+titleY = 0
 
 lost = False
 rounding = True
@@ -97,12 +110,18 @@ while not running:
 
     screen.fill((255, 255, 255))
     start_text = font.render("Press S to start, Q to quit", 1, (0,0,0))
-    screen.blit(start_text, (WIDTH/2-400, HEIGHT/2))
+    screen.blit(start_text, (WIDTH/2-300, HEIGHT/2))
+    screen.blit(title, (titleX, titleY))
     pygame.display.flip()
 
 running = True
 
+pygame.mixer.music.load("music_final.mp3")
+pygame.mixer.music.play(-1)
+
 while running:
+    if not pygame.mixer.music.get_busy():
+        pygame.mixer.music.play(-1)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -143,9 +162,13 @@ while running:
         backgroundX -= 10
     else:
         screen.fill((255, 255, 255))
+        screen.blit(you_lose, (you_loseX, you_loseY))
         screen.blit(text, (textX, textY))
+        screen.blit(creditsText, (creditsX, creditsY))
         score = font.render("Your score was " + str(counter), 1, (0,0,0))
         screen.blit(score, (textX, textY+40))
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.fadeout(1000)
         lost = True
 
     counterText = font.render(str((counter)), 1, (0,0,0))
