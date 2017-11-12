@@ -73,7 +73,7 @@ font2 = pygame.font.Font("SomethingStrange.ttf", 120)
 you_lose = font2.render("You Lose!", 1, (255, 0, 0))
 you_loseX = WIDTH/2-200
 you_loseY = 0
-text = font.render("Press any key to play again!", 1, (0, 0, 0))
+text = font.render("Press enter to play again!", 1, (0, 0, 0))
 textX = WIDTH/2-400
 textY = HEIGHT/2-40
 creditsFont = pygame.font.SysFont("", 30)
@@ -127,21 +127,22 @@ while running:
             running = False
         if event.type == pygame.KEYUP:
             if lost:
-                lost = False
-                counter = 0
-                personY = HEIGHT/2
-                carX = WIDTH-500
-                carY = (HEIGHT/2)+150
-                personY = HEIGHT/2
-                up = False
-                down = True
-                speed = 20
-            if event.key == pygame.K_UP and not up:
+                if event.key == pygame.K_RETURN:
+                    lost = False
+                    counter = 0
+                    personY = HEIGHT/2
+                    carX = WIDTH-500
+                    carY = (HEIGHT/2)+150
+                    personY = HEIGHT/2
+                    up = False
+                    down = True
+                    speed = 20
+            if event.key == pygame.K_UP and not up and not lost:
                 up = True
                 down = False
                 car_deltas.append(-200)
                 personY -= 200
-            if event.key == pygame.K_DOWN and not down:
+            if event.key == pygame.K_DOWN and not down and not lost:
                 up = False
                 down = True
                 car_deltas.append(200)
@@ -171,7 +172,7 @@ while running:
             pygame.mixer.music.fadeout(1000)
         lost = True
 
-    counterText = font.render(str((counter)), 1, (0,0,0))
+    counterText = font.render("Score: " + str((counter)), 1, (0,0,0))
     screen.blit(counterText, (0,0))
 
     pygame.display.flip()
