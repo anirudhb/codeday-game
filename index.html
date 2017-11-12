@@ -72,7 +72,7 @@
     }
     document.querySelector("#right").onclick = function() {
         let oReq = new XMLHttpRequest();
-        oReq.open("PATCH", `http://${document.location.hostname}/cmd`);
+        oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send(JSON.stringify({
             cmd: "right_key"
