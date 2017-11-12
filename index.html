@@ -103,6 +103,14 @@
             value: !(eval(this.responseText.toLowerCase()))
         }))
     }
+    function lost() {
+        let oReq = new XMLHttpRequest();
+        oReq.open("PATCH", `http://${document.location.hostname}:5000/cmd`);
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send(JSON.stringify({
+            cmd: "lost"
+        }));
+    }
     document.onkeydown = function(e) {
         if (e.repeat) return
         if (e.which == 38) {
@@ -116,6 +124,9 @@
         }
         if (e.which == 39) {
             right()
+        }
+        if (e.which == 13) {
+            lost()
         }
         if (e.key == " ") {
             pause()
