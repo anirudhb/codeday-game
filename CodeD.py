@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-WIDTH = 1000
+WIDTH = 2000
 HEIGHT = 1000
 
 counter = 0
@@ -71,19 +71,19 @@ currentCarRect2 = car2Rect
 font = pygame.font.SysFont("", 60, 1)
 font2 = pygame.font.Font("SomethingStrange.ttf", 120)
 you_lose = font2.render("You Lose!", 1, (255, 0, 0))
-you_loseX = WIDTH/2-200
+you_loseX = WIDTH/2-(you_lose.get_width()/2)
 you_loseY = 0
 text = font.render("Press enter to play again!", 1, (0, 0, 0))
-textX = WIDTH/2-400
+textX = WIDTH/2-(text.get_width()/2)
 textY = HEIGHT/2-40
 creditsFont = pygame.font.SysFont("", 30)
 creditsText = creditsFont.render("Credits to David Fesliyan for music; publicdomainvectors.org for art", 1, (0, 0, 0))
-creditsX = WIDTH/2-500
+creditsX = WIDTH/2-(creditsText.get_width()/2)
 creditsY = HEIGHT-40
 
 titleFont = pygame.font.Font("SomethingStrange.ttf", 120)
 title = titleFont.render("Skateboard Daredevil", 1, (255, 0, 0))
-titleX = 25
+titleX = (WIDTH/2)-(title.get_width()/2)
 titleY = 0
 
 lost = False
@@ -94,7 +94,8 @@ down = True
 
 car_deltas = []
 
-speed = 20
+speed = 30
+backgroundSpeed = 20
 
 while not running:
     for event in pygame.event.get():
@@ -115,9 +116,11 @@ while not running:
     pygame.display.flip()
 
 running = True
+personMovement = 10
 
 pygame.mixer.music.load("music_final.mp3")
 pygame.mixer.music.play(-1)
+pygame.key.set_repeat(300, 50)
 
 while running:
     if not pygame.mixer.music.get_busy():
@@ -149,6 +152,13 @@ while running:
                 personY += 200
             if event.key == pygame.K_q:
                 running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT and not lost:
+                personX -= personMovement
+                personX = max(personX, 0)
+            if event.key == pygame.K_RIGHT and not lost:
+                personX += personMovement
+                personX = min(personX, WIDTH-personWidth)
 
 
     screen.fill((255, 255, 255))
@@ -160,7 +170,7 @@ while running:
 
     if (not (personRect.colliderect(currentCarRect) and personY-25 <= carY)):
         carX -= speed
-        backgroundX -= 10
+        backgroundX -= backgroundSpeed
     else:
         screen.fill((255, 255, 255))
         screen.blit(you_lose, (you_loseX, you_loseY))
